@@ -22,10 +22,11 @@ hero_info <- subset(hero_info, select= -X1)
 #glimpse(hero_info)
 
 #4 
+hero_powers <- hero_powers %>% as.data.frame(sapply(hero_powers[, -1], as.logical))
 
 #5
 length(unique(hero_info$Publisher))
-hero_info %>% mutate(Publisher = case_when(Publisher == 'Marvel Comics' ~ 'Marvel', Publisher == 'DC Comics' ~ 'DC'))
+hero_info <- hero_info %>% mutate(Publisher = case_when(Publisher == 'Marvel Comics' ~ 'Marvel', Publisher == 'DC Comics' ~ 'DC'))
 
 #6
 as.data.frame(table(hero_info$Publisher, hero_info$Race))
