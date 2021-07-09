@@ -37,7 +37,7 @@ eyes[order(eyes$Freq, decreasing=TRUE), ]
 
 #8
 power_stats <- hero_powers %>% summarise_if(is.logical, mean, na.rm = TRUE) * 100
-table(hero_powers$Agility)
+
 
 #9
 tidy_hero_powers <- gather(hero_powers, 'poder', 'possui_poder', -hero_names)
