@@ -1,6 +1,11 @@
-# Import and Install Packages
+# IMPORTANT 
+# Before Load libraries make sure they are all installed.
 #install.packages('tidyverse')
+#install.packages('ggpubr')
+
+# Import Section
 library(tidyverse)
+library(ggpubr)
 
 ################################################################################
 # Question 1
@@ -37,7 +42,7 @@ top_5_class_by_species <- df %>%
   dplyr::arrange(desc(n)) %>%
   head(., 5)
 
-# Literal Answer ~~ Question 1 
+# Literal Answer ~~ Question 2 
 head(top_5_class_by_species, 1)
 
 # Top 5 Sorted Plot 
@@ -57,9 +62,69 @@ family_by_class_and_phylum <- df %>%
                    CDS.Count.Max=max(`CDS Count   * assembled`),
                    CDS.Count.Mean=min(`CDS Count   * assembled`), 
                    CDS.Count.By.Object=n(), 
-                   .groups='drop')
+                   .groups='drop') %>%
+  dplyr::arrange(Family, Class, Phylum)
+
+head(family_by_class_and_phylum, 5)
 
 ################################################################################
+#Question 4
+df_4 <- df %>%
+  dplyr::group_by(Phylum, `Oxygen Requirement`) %>%
+  dplyr::summarise(Freq=n(), .groups='drop') %>%
+  tidyr::drop_na(.) %>%
+  dplyr::arrange(desc(Freq))
+
+
+# Dividing Plots in 4 different ones by Frequency Count
+larger_freqs <- ggplot(df_4 %>% dplyr::filter(Freq > 50), 
+                       aes(x=reorder(Phylum, desc(Freq)),
+                           y=Freq, fill=`Oxygen Requirement`)) +
+  
+  ggplot2::geom_col(position = position_dodge()) +
+  coord_flip() +
+  labs(x='', y='Phylum') +
+  ggtitle('Oxygen Requirement by Phylum Smaller') +
+  theme(plot.title = element_text(hjust = 0.5))
+
+smaller_freqs <- ggplot(df_4 %>% dplyr::filter(Freq == 1), 
+                        aes(x=reorder(Phylum, desc(Freq)),
+                            y=Freq, fill=`Oxygen Requirement`)) +
+  
+  ggplot2::geom_col(position = position_dodge(width = 1)) +
+  coord_flip() +
+  labs(x='', y='Phylum') +
+  ggtitle('Oxygen Requirement by Phylum Small') +
+  theme(plot.title = element_text(hjust = 0.5))
+
+small_freqs <- ggplot(df_4 %>% dplyr::filter(Freq <= 10 & Freq > 1), 
+                      aes(x=reorder(Phylum, desc(Freq)),
+                          y=Freq, fill=`Oxygen Requirement`)) +
+  
+  ggplot2::geom_col(position = position_dodge(width = 1)) +
+  coord_flip() +
+  labs(x='', y='Phylum') +
+  ggtitle('Oxygen Requirement by Phylum Medium') +
+  theme(plot.title = element_text(hjust = 0.5))
+
+medium_freqs <- ggplot(df_4 %>% dplyr::filter(Freq < 50 & Freq > 10), 
+                       aes(x=reorder(Phylum, desc(Freq)),
+                           y=Freq, fill=`Oxygen Requirement`)) +
+  
+  ggplot2::geom_col(position = position_dodge(width = 1)) +
+  coord_flip() +
+  labs(x='', y='Phylum') +
+  ggtitle('Oxygen Requirement by Phylum Larger') +
+  theme(plot.title = element_text(hjust = 0.5))
+
+
+#Final Plot with all 4 together 
+ggpubr::ggarrange(smaller_freqs, small_freqs, medium_freqs, larger_freqs)
+
+
+################################################################################
+
+
 
   
 
