@@ -21,7 +21,7 @@ df_na_columns_tidy <- df %>%
   tidyr::gather(., 'variable', 'na_count')
 
 
-ggplot(df_na_columns_tidy, aes(x = reorder(variable, desc(na_count)), y=na_count, fill=variable)) +
+q1_na_count <- ggplot(df_na_columns_tidy, aes(x = reorder(variable, desc(na_count)), y=na_count, fill=variable)) +
   ggplot2::geom_col() + 
   theme_void() +
   coord_flip() +
@@ -36,17 +36,17 @@ ggplot(df_na_columns_tidy, aes(x = reorder(variable, desc(na_count)), y=na_count
 ################################################################################
 # Question 2
 # Top 5 Species by Class 
-top_5_class_by_species <- df %>% 
+df_2 <- df %>% 
   dplyr::group_by(Class, Species) %>%
   dplyr::summarise(n=n()) %>%
   dplyr::arrange(desc(n)) %>%
   head(., 5)
 
 # Literal Answer ~~ Question 2 
-head(top_5_class_by_species, 1)
+head(df_2, 1)
 
 # Top 5 Sorted Plot 
-ggplot(top_5_class_by_species, aes(x=reorder(Species, desc(n)), y=n, fill=Class)) + 
+q2_class_by_species <- ggplot(df_2, aes(x=reorder(Species, desc(n)), y=n, fill=Class)) + 
   ggplot2::geom_col() + 
   coord_flip() +
   labs(x='', y='Species Count') +
@@ -56,7 +56,7 @@ ggplot(top_5_class_by_species, aes(x=reorder(Species, desc(n)), y=n, fill=Class)
 
 ################################################################################
 # Question 3
-family_by_class_and_phylum <- df %>%
+df_3 <- df %>%
   dplyr::group_by(Family, Phylum, Class) %>%
   dplyr::summarise(CDS.Count.Mean=mean(`CDS Count   * assembled`),
                    CDS.Count.Max=max(`CDS Count   * assembled`),
@@ -65,7 +65,7 @@ family_by_class_and_phylum <- df %>%
                    .groups='drop') %>%
   dplyr::arrange(Family, Class, Phylum)
 
-head(family_by_class_and_phylum, 5)
+head(df_3, 5)
 
 ################################################################################
 #Question 4
@@ -75,7 +75,7 @@ df_4 <- df %>%
   tidyr::drop_na(.) %>%
   dplyr::arrange(desc(Freq))
 
-
+# By Phylum Classification
 # Dividing Plots in 4 different ones by Frequency Count
 larger_freqs <- ggplot(df_4 %>% dplyr::filter(Freq > 50), 
                        aes(x=reorder(Phylum, desc(Freq)),
@@ -119,8 +119,17 @@ medium_freqs <- ggplot(df_4 %>% dplyr::filter(Freq < 50 & Freq > 10),
 
 
 #Final Plot with all 4 together 
-ggpubr::ggarrange(smaller_freqs, small_freqs, medium_freqs, larger_freqs)
+q4_phylum_by_oxygen <- ggpubr::ggarrange(smaller_freqs, small_freqs, medium_freqs, larger_freqs)
 
+# By Oxygen Requirement Classification
+q4_oxygen_by_phylum <- ggplot(df_4, aes(x=reorder(x=`Oxygen Requirement`, desc(Freq)), y=Freq,  fill=Phylum)) +
+  ggplot2::geom_col() +
+  coord_flip() + 
+  labs(x='', y='Oxygen Requirement') +
+  ggtitle('Oxygen Requirement by Phylum Medium') +
+  theme(plot.title = element_text(hjust = 0.5))
+
+q4_oxygen_by_phylum
 
 ################################################################################
 
