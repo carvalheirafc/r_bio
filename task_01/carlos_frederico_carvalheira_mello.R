@@ -6,9 +6,10 @@
  
 # IMPORTANT 
 # Before Load libraries make sure they are all installed.
+
 #install.packages('tidyverse')
-install.packages('ggpubr')
-install.packages('reshape2')
+#install.packages('ggpubr')
+#install.packages('reshape2')
 
 
 # Import Section
@@ -127,6 +128,7 @@ medium_freqs <- ggplot(df_4 %>% dplyr::filter(Freq < 50 & Freq > 10),
   theme(plot.title = element_text(hjust = 0.5))
 #Final Plot with all 4 together 
 q4_phylum_by_oxygen <- ggpubr::ggarrange(smaller_freqs, small_freqs, medium_freqs, larger_freqs)
+q4_phylum_by_oxygen
 # By Oxygen Requirement Classification
 q4_oxygen_by_phylum <- ggplot(df_4, aes(x=reorder(x=`Oxygen Requirement`, desc(Freq)), y=Freq,  fill=Phylum)) +
   ggplot2::geom_col() +
@@ -209,7 +211,6 @@ ggplot(df_5_tidy, aes(x=Freq, y=`Release Date`, fill=SequencingMethod)) +
 
 ################################################################################
 # Question 6
-
 df_6 <- df %>%
   dplyr::select(`Genome Size   * assembled`:`Paralogs Count`) %>%
   dplyr::mutate_all(~scale(.))
